@@ -63,7 +63,7 @@ The following section creates a virtual network named *myVnet* in the *10.0.0.0/
 resource "azurerm_virtual_network" "myterraformnetwork" {
     name                = "myVnet"
     address_space       = ["10.0.0.0/16"]
-    location            = "eastus"
+    location            = "${azurerm_resource_group.myterraformgroup.location}"
     resource_group_name = "${azurerm_resource_group.myterraformgroup.name}"
 
     tags {
@@ -90,7 +90,7 @@ To access resources across the Internet, create and assign a public IP address t
 ```tf
 resource "azurerm_public_ip" "myterraformpublicip" {
     name                         = "myPublicIP"
-    location                     = "eastus"
+    location                     = "${azurerm_resource_group.myterraformgroup.location}"
     resource_group_name          = "${azurerm_resource_group.myterraformgroup.name}"
     allocation_method            = "Dynamic"
 
@@ -107,7 +107,7 @@ Network Security Groups control the flow of network traffic in and out of your V
 ```tf
 resource "azurerm_network_security_group" "myterraformnsg" {
     name                = "myNetworkSecurityGroup"
-    location            = "eastus"
+    location            = "${azurerm_resource_group.myterraformgroup.location}"
     resource_group_name = "${azurerm_resource_group.myterraformgroup.name}"
     
     security_rule {
@@ -135,7 +135,7 @@ A virtual network interface card (NIC) connects your VM to a given virtual netwo
 ```tf
 resource "azurerm_network_interface" "myterraformnic" {
     name                = "myNIC"
-    location            = "eastus"
+    location            = "${azurerm_resource_group.myterraformgroup.location}"
     resource_group_name = "${azurerm_resource_group.myterraformgroup.name}"
     network_security_group_id = "${azurerm_network_security_group.myterraformnsg.id}"
 
@@ -173,7 +173,7 @@ Now you can create a storage account. The following section creates a storage ac
 resource "azurerm_storage_account" "mystorageaccount" {
     name                = "diag${random_id.randomId.hex}"
     resource_group_name = "${azurerm_resource_group.myterraformgroup.name}"
-    location            = "eastus"
+    location            = "${azurerm_resource_group.myterraformgroup.location}"
     account_replication_type = "LRS"
     account_tier = "Standard"
 
@@ -193,7 +193,7 @@ The final step is to create a VM and use all the resources created. The followin
 ```tf
 resource "azurerm_virtual_machine" "myterraformvm" {
     name                  = "myVM"
-    location              = "eastus"
+    location              = "${azurerm_resource_group.myterraformgroup.location}"
     resource_group_name   = "${azurerm_resource_group.myterraformgroup.name}"
     network_interface_ids = ["${azurerm_network_interface.myterraformnic.id}"]
     vm_size               = "Standard_DS1_v2"
@@ -252,7 +252,7 @@ provider "azurerm" {
 # Create a resource group if it doesn’t exist
 resource "azurerm_resource_group" "myterraformgroup" {
     name     = "myResourceGroup"
-    location = "eastus"
+    location = "${azurerm_resource_group.myterraformgroup.location}"
 
     tags {
         environment = "Terraform Demo"
@@ -263,7 +263,7 @@ resource "azurerm_resource_group" "myterraformgroup" {
 resource "azurerm_virtual_network" "myterraformnetwork" {
     name                = "myVnet"
     address_space       = ["10.0.0.0/16"]
-    location            = "eastus"
+    location            = "${azurerm_resource_group.myterraformgroup.location}"
     resource_group_name = "${azurerm_resource_group.myterraformgroup.name}"
 
     tags {
@@ -282,7 +282,7 @@ resource "azurerm_subnet" "myterraformsubnet" {
 # Create public IPs
 resource "azurerm_public_ip" "myterraformpublicip" {
     name                         = "myPublicIP"
-    location                     = "eastus"
+    location                     = "${azurerm_resource_group.myterraformgroup.location}"
     resource_group_name          = "${azurerm_resource_group.myterraformgroup.name}"
     allocation_method            = "Dynamic"
 
@@ -294,7 +294,7 @@ resource "azurerm_public_ip" "myterraformpublicip" {
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "myterraformnsg" {
     name                = "myNetworkSecurityGroup"
-    location            = "eastus"
+    location            = "${azurerm_resource_group.myterraformgroup.location}"
     resource_group_name = "${azurerm_resource_group.myterraformgroup.name}"
     
     security_rule {
@@ -317,7 +317,7 @@ resource "azurerm_network_security_group" "myterraformnsg" {
 # Create network interface
 resource "azurerm_network_interface" "myterraformnic" {
     name                      = "myNIC"
-    location                  = "eastus"
+    location                  = "${azurerm_resource_group.myterraformgroup.location}"
     resource_group_name       = "${azurerm_resource_group.myterraformgroup.name}"
     network_security_group_id = "${azurerm_network_security_group.myterraformnsg.id}"
 
@@ -347,7 +347,7 @@ resource "random_id" "randomId" {
 resource "azurerm_storage_account" "mystorageaccount" {
     name                        = "diag${random_id.randomId.hex}"
     resource_group_name         = "${azurerm_resource_group.myterraformgroup.name}"
-    location                    = "eastus"
+    location                    = "${azurerm_resource_group.myterraformgroup.location}"
     account_tier                = "Standard"
     account_replication_type    = "LRS"
 
@@ -359,7 +359,7 @@ resource "azurerm_storage_account" "mystorageaccount" {
 # Create virtual machine
 resource "azurerm_virtual_machine" "myterraformvm" {
     name                  = "myVM"
-    location              = "eastus"
+    location              = "${azurerm_resource_group.myterraformgroup.location}"
     resource_group_name   = "${azurerm_resource_group.myterraformgroup.name}"
     network_interface_ids = ["${azurerm_network_interface.myterraformnic.id}"]
     vm_size               = "Standard_DS1_v2"
